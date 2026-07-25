@@ -4,6 +4,14 @@ import userRoutes from "./routes/user.routes.js";
 const app = express();
 app.use(express.json());
 
+
+app.get('/',(req,res) => {
+    res.status(200).json({
+        success:true,
+        message: "server is running.."
+    })
+})
+
 app.use('/api/v1',userRoutes)
 
 export default app;
