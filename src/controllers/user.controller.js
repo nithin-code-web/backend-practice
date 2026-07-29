@@ -7,12 +7,6 @@ export const createUser = (req,res) => {
             })
         }
         const { name,email } = req.body;
-        if ( !name || !email) {
-            return res.status(400).json({ 
-                status: false,
-                message:"name and email are required"
-            })
-        }
         return res.status(201).json({
             status: true,
             message:"user created successfully",
