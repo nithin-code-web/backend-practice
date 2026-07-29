@@ -1,8 +1,10 @@
 import express from "express";
 import userRoutes from "./routes/user.routes.js";
+import logger from "./middlewares/logger.js";
 
 const app = express();
 app.use(express.json());
+app.use(logger)
 
 
 app.get('/',(req,res) => {
