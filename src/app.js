@@ -1,6 +1,7 @@
 import express from "express";
 import userRoutes from "./routes/user.routes.js";
 import logger from "./middlewares/logger.js";
+import apikeyAuth from "./middlewares/apiKeyAuth.js"
 
 const app = express();
 app.use(express.json());
@@ -14,6 +15,6 @@ app.get('/',(req,res) => {
     })
 })
 
-app.use('/api/v1',userRoutes)
+app.use('/api/v1',apikeyAuth,userRoutes)
 
 export default app;
