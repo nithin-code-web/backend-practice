@@ -1,3 +1,6 @@
+import asyncHandler from "../utils/asyncHandler.js";
+import AppError from "../utils/AppError.js";
+
 export const createUser = (req,res) => {
     try {
         const { name,email } = req.body;
@@ -29,27 +32,18 @@ export const getAllUsers = (req,res) => {
     }
 } 
 
-export const getUserById = (req,res) => {
-    try {
+export const getUserById =asyncHandler(async (req,res) => {
+
         const { id } = req.params
 
         if (isNaN(parseInt(id)) || parseInt(id) < 0) {
-            return res.status(400).json({
-                status : false,
-                message: "invalid id"
-            })
+            throw new AppError("invalid id",400)
         }
         return res.status(200).json({
             status : true,
             message : "user fetched successfully"
         })
-    } catch (error) {
-        res.status(500).json({
-            message:"server error",
-            error: error.message
-        })
-    }
-}
+})
 
 export const searchUsers = (req,res) => {
     try {
