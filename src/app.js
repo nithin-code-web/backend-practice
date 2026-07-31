@@ -2,6 +2,7 @@ import express from "express";
 import userRoutes from "./routes/user.routes.js";
 import logger from "./middlewares/logger.js";
 import apikeyAuth from "./middlewares/apiKeyAuth.js"
+import errHandler from "./middlewares/errorHandler.js";
 
 const app = express();
 app.use(express.json());
@@ -16,5 +17,7 @@ app.get('/',(req,res) => {
 })
 
 app.use('/api/v1',apikeyAuth,userRoutes)
+
+app.use(errHandler);
 
 export default app;
