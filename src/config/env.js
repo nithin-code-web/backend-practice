@@ -4,7 +4,8 @@ import {z} from 'zod'
 const envSchema = z.object({
     PORT: z.coerce.number().default(5000),
     NODE_ENV: z.enum(['development', 'production']).default('development'),
-    API_KEY: z.string().min(1)
+    API_KEY: z.string().min(1),
+    MONGODB_URI: z.string().url()
 })
 const env = envSchema.parse(process.env)
 
