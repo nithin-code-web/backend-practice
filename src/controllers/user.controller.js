@@ -1,158 +1,57 @@
 import asyncHandler from "../utils/asyncHandler.js";
 import AppError from "../utils/AppError.js";
+import User from "../models/user.model.js"
 
-export const createUser = (req,res) => {
-    try {
-        const { name,email } = req.body;
+export const createUser = asyncHandler( async (req,res) => {
+        const { name,email,password } = req.body;
+        const user = await User.create({ name, email, password })
+        const safeUser = await User.findById(user._id).select('-password')
         return res.status(201).json({
             status: true,
             message:"user created successfully",
-            data: {name,email}
+            data: safeUser
         })
-
-    } catch (error) {
-        res.status(500).json({
-            message:"server error",
-            error: error.message
-        })
-    }
-}
-
-export const getAllUsers = (req,res) => {
-    try {
-        return res.status(200).json({
-            status : true,
-            message: "all users.."
-        })
-    } catch (err) {
-        res.status(500).json({
-            message: "server error",
-            error:err.message
-        })
-    }
-} 
+})
+    
+export const getAllUsers = asyncHandler( async(req,res) => {
+    const users = await User.find().select('-password')
+    res.status(200).json({
+        status:true,
+        count:users.length,
+        data:users
+    })
+})
 
 export const getUserById =asyncHandler(async (req,res) => {
-
-        const { id } = req.params
-
-        if (isNaN(parseInt(id)) || parseInt(id) < 0) {
-            throw new AppError("invalid id",400)
-        }
+        const user = await User.findById(req.params.id).select('-password')
+        if (!user) throw new AppError("user not found",404)
         return res.status(200).json({
             status : true,
-            message : "user fetched successfully"
+            message : "user fetched successfully",
+            data: user
         })
 })
 
-export const searchUsers = (req,res) => {
-    try {
-        const { name } = req.query;
-
-        if (!name) {
-            return res.status(400).json({
-                status:false,
-                message:"name query is required"
-            })
-        }
-        return res.status(200).json({
-            status : true,
-            message: `search results for ${name}`
-        })
-    } catch (error) {
-        res.status(500).json({
-            message:"server error",
-            error: error.message
-        })
-    }
-}
-
-export const replaceUser = (req,res) => {
-    try{
-        const { id } = req.params
-
-        if (isNaN(parseInt(id)) || parseInt(id) < 0) {
-            return res.status(400).json({
-                status:false,
-                message:"invalid id"
-            })
-        }
-
-        const { name,email } = req.body
-
-        return res.status(200).json({
-            status:true,
-            message:"user replaced successfully",
-            data:{id,name,email}
-        })
-
-    } catch(error) {
-        res.status(500).json({
-            message:"server error",
-            error:error.message
-        })
-    }
-}
-
-export const updateUser = (req,res) => {
-    try{
-        const { id } = req.params
-
-        if (isNaN(parseInt(id)) || parseInt(id) < 0) {
-            return res.status(400).json({
-                status:false,
-                message:"invalid id"
-            })
-        }
-
-        if (!req.body || Object.keys(req.body).length === 0) {
-            return res.status(400).json({
-                status:false,
-                message:"no fields to update"
-            })
-        }
-
-        const { name,email } = req.body
-
-        const updates = {}
-        if (name) updates.name = name;
-        if (email) updates.email = email;
-
+export const updateUser = asyncHandler( async(req,res) => {
+        const user = await User.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true , runValidators: true }
+        ).select('-password')
+        if (!user) throw new AppError("User not found",404)
         return res.status(200).json({
             status:true,
             message:"user updated successfully",
-            data:{id,...updates}
+            data:user
         })
 
-    } catch(error) {
-        res.status(500).json({
-            message:"server error",
-            error:error.message
-        })
-    }
+})
 
-}
-
-export const deleteUser = (req,res) => {
-    try{
-        const { id } = req.params
-
-        if (isNaN(parseInt(id)) || parseInt(id) < 0) {
-            return res.status(400).json({
-                status:false,
-                message:"invalid id"
-            })
-        }
-
+export const deleteUser = asyncHandler( async(req,res) => {
+        const user = await User.findByIdAndDelete(req.params.id)
+        if (!user) throw new AppError("User not found",404)
         return res.status(200).json({
             status:true,
             message:"user deleted successfully"
         })
-
-    } catch(error) {
-        res.status(500).json({
-            message:"server error",
-            error:error.message
-        })
-    }
-}
+})
