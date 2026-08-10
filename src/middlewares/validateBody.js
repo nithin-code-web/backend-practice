@@ -1,19 +1,18 @@
-export const validateBody = (fields) => {
-    return (req,res,next) => {
-        if (!req.body) {
-            return res.status(400).json({
-                status:false,
-                message:"empty request body"
-            })
-        }
-        const missing = fields.filter(field => !req.body[field])
+import AppError from "../utils/AppError.js"
+import { ZodError } from "zod";
 
-        if (missing.length > 0) {
-            return res.status(400).json({
-                status:false,
-                message:`missing required fields: ${missing.join(',')}`
-            })
-        } 
-        next();
+export const validateBody = (schema) => {
+    return (req,res,next) => {
+        try {
+            req.body = schema.parse(req.body)
+            next()
+        } catch (error) {
+            if (error instanceof ZodError) {
+                // map over error.issues directly
+                const message = error.issues.map((err) => `${err.path.join('.')} : ${err.message}`).join(', ')
+                return next(new AppError(message, 400))
+            } 
+            next(error)
+        }
     }
 }
