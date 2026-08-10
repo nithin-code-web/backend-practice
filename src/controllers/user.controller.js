@@ -5,11 +5,10 @@ import User from "../models/user.model.js"
 export const createUser = asyncHandler( async (req,res) => {
         const { name,email,password } = req.body;
         const user = await User.create({ name, email, password })
-        const safeUser = await User.findById(user._id).select('-password')
         return res.status(201).json({
             status: true,
             message:"user created successfully",
-            data: safeUser
+            data: user
         })
 })
     
@@ -23,7 +22,7 @@ export const getAllUsers = asyncHandler( async(req,res) => {
 })
 
 export const getUserById =asyncHandler(async (req,res) => {
-        const user = await User.findById(req.params.id).select('-password')
+        const user = await User.findById(req.params.id)
         if (!user) throw new AppError("user not found",404)
         return res.status(200).json({
             status : true,
@@ -37,7 +36,7 @@ export const updateUser = asyncHandler( async(req,res) => {
             req.params.id,
             req.body,
             { new: true , runValidators: true }
-        ).select('-password')
+        )
         if (!user) throw new AppError("User not found",404)
         return res.status(200).json({
             status:true,
