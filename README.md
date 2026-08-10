@@ -54,6 +54,13 @@ src/
 | 7 | Error Handling | AppError, asyncHandler, global error middleware |
 
 ### Week 2 — MongoDB and Mongoose *(in progress)*
+
+| Day | Topic | Key Concepts |
+|-----|-------|-------------|
+| 8 | MongoDB Atlas Connection | Mongoose setup, async DB connection before server start |
+| 9 | Mongoose Schemas & Models | Schema definitions, types, required, unique, timestamps, select |
+| 10 | CRUD APIs | `User.find()`, `create()`, `findById()`, `findByIdAndUpdate()`, `findByIdAndDelete()` |
+
 ### Week 3 — Authentication and Security
 ### Week 4 — PostgreSQL and Production
 
